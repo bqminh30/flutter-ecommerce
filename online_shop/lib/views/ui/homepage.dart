@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:online_shop/models/sneaker_model.dart';
+import 'package:online_shop/services/helper.dart';
 import 'package:online_shop/views/shared/appstyle.dart';
+import 'package:online_shop/views/shared/new_shoes.dart';
 import 'package:online_shop/views/shared/product_cart.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +17,31 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final TabController _tabController =
       TabController(length: 3, vsync: this);
+
+  late Future<List<Sneakers>> _male;
+  late Future<List<Sneakers>> _female;
+  late Future<List<Sneakers>> _kids;
+  void getMale() {
+    _male = Helper().getMaleSneakers();
+  }
+
+  void getFemale() {
+    _female = Helper().getFemaleneakers();
+  }
+
+  void getKids() {
+    _kids = Helper().getKidsneakers();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getMale();
+    getFemale();
+    getKids();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,26 +96,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.265),
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.27),
             child: Container(
               padding: const EdgeInsets.only(left: 12),
               child: TabBarView(controller: _tabController, children: [
                 Column(
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.405,
-                      child: ListView.builder(
-                          itemCount: 6,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return const ProductCard(
-                                price: "\$20.00",
-                                category: "Men Shoes",
-                                id: "1",
-                                name: "Adidas ",
-                                image:
-                                    "https://d326fntlu7tb1e.cloudfront.net/uploads/76cfc4b8-5d8c-4213-96f9-b36cf4245c1d-F99739_a1.webp");
+                      height: MediaQuery.of(context).size.height * 0.40,
+                      child: FutureBuilder<List<Sneakers>>(
+                          future: _male,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            } else {
+                              final male = snapshot.data;
+                              return ListView.builder(
+                                  itemCount: male!.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    final shoe = snapshot.data![index];
+                                    return ProductCard(
+                                        price: "\$${shoe.price}",
+                                        category: shoe.category,
+                                        id: shoe.id,
+                                        name: shoe.name,
+                                        image: shoe.imageUrl[0]);
+                                  });
+                            }
                           }),
                     ),
                     Column(
@@ -122,33 +162,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.13,
-                      child: ListView.builder(
-                          itemCount: 6,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black38,
-                                            spreadRadius: 1,
-                                            blurRadius: 0.8,
-                                            offset: Offset(0, 1))
-                                      ],
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(16))),
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.12,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.28,
-                                  child: CachedNetworkImage(
-                                    imageUrl:
-                                        "https://d326fntlu7tb1e.cloudfront.net/uploads/d60aca33-909b-4df7-9ad7-b75039438e29-GX1398_a1.webp",
-                                  )),
-                            );
+                      child: FutureBuilder<List<Sneakers>>(
+                          future: _male,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text("Error: ${snapshot.error}");
+                            } else {
+                              final male = snapshot.data;
+                              return ListView.builder(
+                                  itemCount: male!.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    final shoe = snapshot.data![index];
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: NewShoes(
+                                        imageUrl: shoe.imageUrl[0],
+                                      ),
+                                    );
+                                  });
+                            }
                           }),
                     )
                   ],

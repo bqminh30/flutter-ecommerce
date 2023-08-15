@@ -41,4 +41,26 @@ class Helper {
 
     return sneaker;
   }
+
+  Future<Sneakers> getFemaleSneakersById(String id) async {
+    final data =
+        await the_bundle.rootBundle.loadString("assets/json/women_shoes.json");
+
+    final femaleList = sneakersFromJson(data);
+
+    final sneaker = femaleList.firstWhere((sneaker) => sneaker.id == id);
+
+    return sneaker;
+  }
+
+  Future<Sneakers> getKidsSneakersById(String id) async {
+    final data =
+        await the_bundle.rootBundle.loadString("assets/json/kids_shoes.json");
+
+    final kidsList = sneakersFromJson(data);
+
+    final sneaker = kidsList.firstWhere((sneaker) => sneaker.id == id);
+
+    return sneaker;
+  }
 }
