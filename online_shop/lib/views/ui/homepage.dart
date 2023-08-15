@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:online_shop/views/shared/appstyle.dart';
+import 'package:online_shop/views/shared/product_cart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFE2E2E2),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Stack(children: [
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         controller: _tabController,
                         labelColor: Colors.white,
                         isScrollable: true,
+                        padding: EdgeInsets.zero,
                         labelStyle: appstyle(24, Colors.white, FontWeight.bold),
                         unselectedLabelColor: Colors.grey.withOpacity(0.3),
                         tabs: const [
@@ -78,14 +81,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           itemCount: 6,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                  color: Colors.grey,
-                                  height: MediaQuery.of(context).size.height,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.6),
-                            );
+                            return const ProductCard(
+                                price: "\$20.00",
+                                category: "Men Shoes",
+                                id: "1",
+                                name: "Adidas ",
+                                image:
+                                    "https://d326fntlu7tb1e.cloudfront.net/uploads/76cfc4b8-5d8c-4213-96f9-b36cf4245c1d-F99739_a1.webp");
                           }),
                     ),
                     Column(
